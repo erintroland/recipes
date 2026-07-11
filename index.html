@@ -3,10 +3,103 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>Digital Recipe Box</title>
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="locked">
+
+<style>
+  body.locked .page-wrap { display: none; }
+  #pw-gate {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #fafafa;
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+  }
+  body.locked #pw-gate { display: flex; }
+  #pw-gate-box {
+    background: #fff;
+    padding: 2.5rem 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.12);
+    text-align: center;
+    max-width: 320px;
+    width: 90%;
+  }
+  #pw-gate-box h2 {
+    margin: 0 0 1rem;
+    font-size: 1.2rem;
+  }
+  #pw-input {
+    width: 100%;
+    padding: 0.6rem;
+    font-size: 1rem;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-bottom: 0.75rem;
+  }
+  #pw-submit {
+    width: 100%;
+    padding: 0.6rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    background: #333;
+    color: #fff;
+    cursor: pointer;
+  }
+  #pw-error {
+    color: #c0392b;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    display: none;
+  }
+</style>
+
+<div id="pw-gate">
+  <div id="pw-gate-box">
+    <h2>This page is private</h2>
+    <input type="password" id="pw-input" placeholder="Password" autocomplete="off">
+    <button id="pw-submit">Enter</button>
+    <p id="pw-error">Incorrect password, try again.</p>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const CORRECT_PASSWORD = "recipebox2026";
+    const SESSION_KEY = "recipeBoxUnlocked";
+
+    if (sessionStorage.getItem(SESSION_KEY) === "true") {
+      document.body.classList.remove("locked");
+    }
+
+    const input = document.getElementById("pw-input");
+    const submitBtn = document.getElementById("pw-submit");
+    const errorMsg = document.getElementById("pw-error");
+
+    function tryUnlock() {
+      if (input.value === CORRECT_PASSWORD) {
+        sessionStorage.setItem(SESSION_KEY, "true");
+        document.body.classList.remove("locked");
+        errorMsg.style.display = "none";
+      } else {
+        errorMsg.style.display = "block";
+      }
+    }
+
+    submitBtn.addEventListener("click", tryUnlock);
+    input.addEventListener("keydown", function(e) {
+      if (e.key === "Enter") tryUnlock();
+    });
+  })();
+</script>
+
 <div class="page-wrap">
   <header><h1>Digital Recipe Box</h1></header>
   <div class="search-wrap">
